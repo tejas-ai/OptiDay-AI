@@ -1,5 +1,5 @@
 {
-  "name": "OptiDay AI",
+  "name": "OptiDay",
   "description": "An intelligent daily planner that learns your routine and prioritizes your tasks using Google Gemini.",
   "requestFramePermissions": [
     "microphone"
