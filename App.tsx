@@ -4,6 +4,8 @@ import TaskForm from './components/TaskForm';
 import TaskList from './components/TaskList';
 import ScheduleDisplay from './components/ScheduleDisplay';
 import Preferences from './components/Preferences';
+import ChatAssistant from './components/ChatAssistant';
+import LiveAssistant from './components/LiveAssistant';
 import { Task, UserPreferences, ScheduleResponse } from './types';
 import { generateSchedule } from './services/geminiService';
 
@@ -20,29 +22,7 @@ const App: React.FC = () => {
   const [schedule, setSchedule] = useState<ScheduleResponse | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Theme State
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('optiday_theme');
-      if (saved === 'dark' || saved === 'light') return saved;
-      return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    }
-    return 'light';
-  });
-
-  // Apply theme class
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark') {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-    localStorage.setItem('optiday_theme', theme);
-  }, [theme]);
-
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // Load from local storage on mount
   useEffect(() => {
@@ -100,13 +80,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans transition-colors duration-200">
-      <Header theme={theme} onToggleTheme={toggleTheme} />
+    <div className="min-h-screen bg-slate-950 flex flex-col font-sans">
+      <Header 
+        onToggleChat={() => setIsChatOpen(!isChatOpen)} 
+        isChatOpen={isChatOpen} 
+      />
       
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 relative">
         
         {error && (
-            <div className="mb-6 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-lg flex items-center justify-between">
+            <div className="mb-6 bg-red-900/20 border-l-4 border-red-500 p-4 rounded-r-lg flex items-center justify-between">
                 <div className="flex">
                     <div className="flex-shrink-0">
                         <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
@@ -114,10 +97,10 @@ const App: React.FC = () => {
                         </svg>
                     </div>
                     <div className="ml-3">
-                        <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                        <p className="text-sm text-red-300">{error}</p>
                     </div>
                 </div>
-                <button onClick={() => setError(null)} className="text-red-500 hover:text-red-700 dark:hover:text-red-300">
+                <button onClick={() => setError(null)} className="text-red-500 hover:text-red-300">
                     <span className="sr-only">Close</span>
                     <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -131,6 +114,10 @@ const App: React.FC = () => {
           <div className="lg:col-span-4 space-y-8">
             <section>
                 <TaskForm onAddTask={handleAddTask} />
+            </section>
+
+            <section>
+                <LiveAssistant />
             </section>
             
             <section>
@@ -158,8 +145,13 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      <footer className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 mt-12 py-6 transition-colors duration-200">
-          <div className="max-w-7xl mx-auto px-4 text-center text-slate-400 dark:text-slate-500 text-sm">
+      <ChatAssistant 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+      />
+
+      <footer className="bg-slate-900 border-t border-slate-800 mt-12 py-6">
+          <div className="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
               &copy; {new Date().getFullYear()} OptiDay AI. Optimized for productivity.
           </div>
       </footer>

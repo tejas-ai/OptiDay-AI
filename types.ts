@@ -33,3 +33,11 @@ export interface ScheduleResponse {
   schedule: ScheduleItem[];
   dailySummary: string;
 }
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
+  groundingUrls?: string[];
+}
+
+export type ImageSize = '1K' | '2K' | '4K';
