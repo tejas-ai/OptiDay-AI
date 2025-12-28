@@ -150,9 +150,12 @@ const App: React.FC = () => {
         onClose={() => setIsChatOpen(false)} 
       />
 
-      <footer className="bg-slate-900 border-t border-slate-800 mt-12 py-6">
-          <div className="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
-              &copy; {new Date().getFullYear()} OptiDay AI. Optimized for productivity.
+      <footer className="bg-slate-900 border-t border-slate-800 mt-12 py-8">
+          <div className="max-w-7xl mx-auto px-4 text-center">
+              <p className="text-slate-400 text-sm font-medium mb-2">Created and developed by Tejas.</p>
+              <p className="text-slate-500 text-xs max-w-lg mx-auto leading-relaxed">
+                  Built with modern AI technologies to help people plan their days with clarity, balance, and purpose.
+              </p>
           </div>
       </footer>
     </div>
